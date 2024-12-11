@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt.token_blacklist', # Pour activer blacklist
     'Produits',
     'AvisProduits',
     'Clients',
@@ -54,6 +55,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTIVATION_CLASSES':[
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
+}
+
+SIMPLE_JWT = {
+    'BLACKLIST_AFTER_ROTATION': True # Pour activer la rotation et le blacklistage des token
 }
 
 MIDDLEWARE = [
