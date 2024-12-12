@@ -28,11 +28,15 @@ class CreateurSerializer(serializers.ModelSerialier):
         return data
 
     def create(self, validated_data):
-        user = User.objects.create(username = validated_data['user']['username'], email=validated_data['user']['email'])
-        user.set_password(validated_data['user']['password'])
+        user_data = validated_data.pop('user')
+        user = User.objects.create(username = user_data['username'], email=user_data['email'])
+        user.set_password(user_data['password'])
         user.save()
 
         createur = Createur.objects.create(user=user, contact=validated_data["contact"])
+        createur.save()
+
+        return client
 
 
 
