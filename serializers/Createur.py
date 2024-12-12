@@ -1,20 +1,20 @@
 from rest_framework import serializers
 from Createur.models import Createur
 from django.contrib.auth.models import User
-from rest_framework.exceptions import ValidatonError
+from rest_framework.exceptions import ValidationError
 
 MIN_LENGTH = 8
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=MIN_LENGTH, error_messages={"min_length": f"Password must be longer than {MIN_LENGTH} characters"})
-    password2 = serializers.CharFiedl(write_only=True, min_length=MIN_LENGTH, error_messages={"min_length": f"Password must be longer than {MIN_LENGTH} characters"})
+    password2 = serializers.CharField(write_only=True, min_length=MIN_LENGTH, error_messages={"min_length": f"Password must be longer than {MIN_LENGTH} characters"})
 
     class Meta:
         model = User
         fields = ["username", "email" ,"password", "password2"]
 
 
-class CreateurSerializer(serializers.ModelSerialier):
+class CreateurSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
     class Meta:
@@ -36,7 +36,7 @@ class CreateurSerializer(serializers.ModelSerialier):
         createur = Createur.objects.create(user=user, contact=validated_data["contact"])
         createur.save()
 
-        return client
+        return createur
 
 
 

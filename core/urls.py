@@ -18,12 +18,17 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from Clients.views import ClientViewset, LoginViewset, LogoutViewset
+from Createur.views import CreateurViewset
 
 router = DefaultRouter()
+# creation de routre pour le client
 router.register(r'user', ClientViewset, basename="signup")
 
 router.register(r'login', LoginViewset, basename="login")
 router.register(r'logout', LogoutViewset, basename="logout")
+# Creation de route pour le createur
+
+router.register(r'createur', CreateurViewset, basename="createur")
 
 
 urlpatterns = [

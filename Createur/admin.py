@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import Createur
 
-# Register your models here.
+class CreateurAdmin(admin.ModelAdmin):
+    list_display = ['user', 'contact']
+
+
+admin.site.register(Createur, CreateurAdmin)

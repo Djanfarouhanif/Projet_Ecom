@@ -12,6 +12,8 @@ class ClientViewset(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
+
+
 class LoginViewset(viewsets.ViewSet):
     permission_classes = [AllowAny]
     
