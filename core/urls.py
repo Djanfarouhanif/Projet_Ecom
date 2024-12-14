@@ -19,6 +19,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from Clients.views import ClientViewset, LoginViewset, LogoutViewset
 from Createur.views import CreateurViewset
+from Produits.views import Produitviewset
 
 router = DefaultRouter()
 # creation de routre pour le client
@@ -30,6 +31,8 @@ router.register(r'logout', LogoutViewset, basename="logout")
 
 router.register(r'createur', CreateurViewset, basename="createur")
 
+# Creation de route pour la creation de produits
+router.register(r'produit', Produitviewset, basename="produit")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
