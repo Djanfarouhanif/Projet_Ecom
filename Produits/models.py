@@ -14,5 +14,6 @@ class Produit(models.Model):
     image = models.ImageField(upload_to="Produits/", blank=True, null=True)
     date_ajout = models.DateTimeField(auto_now_add=True)
 
+
     def __str__(self):
         return self.nom
