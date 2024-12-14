@@ -28,7 +28,7 @@ class Produitviewset(viewsets.ModelViewSet):
             if Createur.objects.filter(user= user).exists():
                 createur = Createur.objects.get(user=user)
                 # Crée un nouveau produit
-                print("--------------------------------------")
+                
                 new_produit = Produit.objects.create(createur=createur, **serializer.validated_data)
                 new_produit.save()
 
@@ -68,7 +68,7 @@ class Produitviewset(viewsets.ModelViewSet):
 
         else:
             # si l'utisateur ne fait pas partie des createur ou n'est pas enregistre
-            return Response({"error": "User not matching"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "User not creators"}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
 
