@@ -20,6 +20,7 @@ from rest_framework.routers import DefaultRouter
 from Clients.views import ClientViewset, LoginViewset, LogoutViewset
 from Createur.views import CreateurViewset
 from Produits.views import Produitviewset
+from Commandes.views import CommandeViewset
 
 router = DefaultRouter()
 # creation de routre pour le client
@@ -34,6 +35,8 @@ router.register(r'createur', CreateurViewset, basename="createur")
 # Creation de route pour la creation de produits
 router.register(r'produit', Produitviewset, basename="produit")
 
+# URL pour passer les commandes 
+router.register(r'commande', CommandeViewset, basename='commande')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls))

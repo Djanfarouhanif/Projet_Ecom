@@ -3,9 +3,10 @@ from Clients.models import Client
 from Produits.models import Produit
 # Create your models here.
 
+# Modele pour commandér les produit 
 class Commande(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    produits = models.ManyToManyField(Produit, through="ProduitCommande")
+    produits = models.ForeignKey(Produit, on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices = [("EN ATTENTE", "En attente"),('VALIDE', 'Validée') , ("ANNULE", "Annule")], default="EN ATTENTE")
     date_command = models.DateTimeField(auto_now_add=True)

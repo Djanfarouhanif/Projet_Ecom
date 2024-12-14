@@ -69,3 +69,28 @@ class Produitviewset(viewsets.ModelViewSet):
         else:
             # si l'utisateur ne fait pas partie des createur ou n'est pas enregistre
             return Response({"error": "User not matching"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+
+        # Récuper l'object produit a suprimer 
+        produit = self.get_object()
+
+        # Vérifier si l'utisateur courent est un createur
+
+        if Createur.objects.filter(user=request.user).exists():
+            # Récuper l'utilisateur
+            createur = Createur.objects.get(user=request.user)
+
+            # Verifier si le produit appartient cet createur
+
+            if produit.createur == createur:
+                # suprimer le produit
+                produit.delete()
+
+                return Response({"success": "product delete"}, status=status.HTTP_200_OK)
+                
+            else:
+                return Response({"error": "This product is not matching for createur"}, status=status.HTTP_403_FORBIDDEN)
+
+        else:
+            return Response({"error": "User not in createur"}, status=status.HTTP_403_FORBIDDEN)
