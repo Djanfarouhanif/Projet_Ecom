@@ -119,6 +119,31 @@ class CommandeViewset(viewsets.ModelViewSet):
             
 
         return Response(status=status.HTTP_403_FORBIDDEN)
+    
+    def update(self, request, *args, **kwargs):
+
+        current_user = self.request.user
+
+        # Réccuper l'object pour mettre a jour
+        commande = self.get_object()
+
+        
+
+        if Client.objects.filter(user=request.user).exists():
+            current_client = Client.objects.get(user=current_user)
+
+            if Commande.objects.filter(client=current_client):
+                serializer = self.get_serializer(commande, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+
+                    return Response({"status": 'success'}, status = status.HTTP_200_OK)
+
+        
+
+                
+
+
 
 
         
