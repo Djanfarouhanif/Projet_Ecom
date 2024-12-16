@@ -10,7 +10,7 @@ from Produits.models import Produit
 
 
 class CommandeViewset(viewsets.ModelViewSet):
-    queryset = Commande.objects.all()
+    # queryset = Commande.objects.all()
     serializer_class = CommandeSerializers
     permission_classes = [IsAuthenticated]
     
@@ -40,14 +40,18 @@ class CommandeViewset(viewsets.ModelViewSet):
                 
 
                 # Récuperé le client
-                current_client = Client.objects.get(user=current_user)
+                if Client.objects.filter(user=current_user):
+                    current_client = Client.objects.get(user=current_user)
 
-                commande = Commande.objects.create( client=current_client,createur=createur,**serializer.validated_data)
+                    commande = Commande.objects.create( client=current_client,createur=createur,**serializer.validated_data)
                 # Après l'enregistrement recuper le createur via produit qui est enregistre dans commande
                 
-                commande.save()
+                    commande.save()
+                    return Response({"success": "Commande crée"}, status=status.HTTP_200_OK)
+                # Si le client n'exits pas envoyer un message 204
+                return Response({"error": "no client account"}, status=status.HTTP_204_NO_CONTENT)
 
-                return Response({"success": "Commande crée"}, status=status.HTTP_200_OK)
+                
             return Response({"error": "data is not valid"}, status=status.HTTP_400_BAD_REQUEST)
     # Fonction pour listé les produit commander
 
@@ -62,43 +66,61 @@ class CommandeViewset(viewsets.ModelViewSet):
 
         return Response({"error": "Client hane not permission"}, status=status.HTTP_403_FORBIDDEN)
 
-    # def get_queryset(self):
-    #     # Cette méthode est utilisée pour personnaliser la queryset retournée Filtre les commandes de l'utilisateur authentifié
+    def get_queryset(self):
+        # Cette méthode est utilisée pour personnaliser la queryset retournée Filtre les commandes de l'utilisateur authentifié
 
-    #     # Affichier toute les produits comander associer au createur de produits
-    #     current_createur = Createur.objects.get(user=self.request.user)
+        # Affichier toute les produits comander associer au createur de produits
+        if Createur.objects.filter(user=self.request.user).exists():
+            current_createur = Createur.objects.get(user=self.request.user)
+            # Facile maintenant parceque chaque commande es associer la commande
 
-    #     current_client = Client.objects.get(user=self.request.user)
-    #     if current_createur:
-    #         produit = Produit.objects.filter(createur=current_createur)
+            return Commande.objects.filter(createur=current_createur)
 
-    #         print(produit, "**************")
-    #         # Vérifier par produit et voire quelle produit est commander 
-
-    #         # Retourner les commandes associer au createur
-    #         return Commande.objects.filter(produits=produit)
-    #     elif current_client:
-    #         # Rétourner directement les produits
-    #         return Commande.objects.filter(client=current_client)
+        # Afficher toutes les commandes associer au clients
+        if Client.objects.filter(user=self.request.user).exists():
+            # Récupere le client actuel qui a passer les commande
+            current_client = Client.objects.get(user=self.request.user)
+            return Commande.objects.filter(client=current_client)
 
 
-    # def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
        
-    #    # Cette méthode gère la liste des commandes filtrées par utilisateur 
+       # Cette méthode gère la liste des commandes filtrées par utilisateur 
 
-    #    # Utiliser la méthode get_querysert() pour obtenir la queryset filtrée
+       # Utiliser la méthode get_querysert() pour obtenir la queryset filtrée
 
-    #    queryset = self.get_queryset()
-    #    if not queryset:
-    #         return Response([], status=status.HTTP_204_NO_CONTENT) # Retourner une réponse vide avec code 204
+       queryset = self.get_queryset()
+       if not queryset:
+            return Response([], status=status.HTTP_204_NO_CONTENT) # Retourner une réponse vide avec code 204
 
-    #    # Sérializer la queryset des commandes 
-    #    serializer = self.get_serializer(queryset, many=True)
+       # Sérializer la queryset des commandes 
+       serializer = self.get_serializer(queryset, many=True)
 
-    #    # Retourne la résponse avec les données serialisée
+       # Retourne la résponse avec les données serialisée
 
-    #    return Response(serializer.data)
-             
+       return Response(serializer.data)
+    # Autiriser uniquement pour le moment le client seule a suprimer la commande
+    def destroy(self, request, *args, **kwargs):
+        # Récuper l'object a suprimer 
+        commande = self.get_object()
+
+        current_user = self.request.user
+
+        # Pour ne pas permetre a un createur de suprimer un commande
+        if Createur.objects.filter(user=current_user):
+            return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        if Client.objects.filter(user=current_user).exists():
+            current_client = Client.objects.get(user=current_user)
+            if commande.client == current_client:
+                commande.delete()
+
+                return Response({"success": "commende suprimer"}, status=status.HTTP_200_OK)
+
+            
+
+        return Response(status=status.HTTP_403_FORBIDDEN)
+
+
         
         
 
